@@ -12,21 +12,28 @@
 
 #include "get_next_line.h"
 
-static char	*fill_line_buf(int fd, char *left_c, char *buf);
+static char	*fill_line(int fd, char *left_c, char *buf);
 static char	*sep_buffer(char *buf);
 
-char	*burro(char *line)
+char	*burro(char *buf)
 {
 	int	i;
 	int	d;
-
+	char	*line;
 	i = 0;
 	d = 0;
-	while (line[i] && line[i] != '\n')
+	
+	while (buf[i] && buf[i] != '\n')
 		i++;
+	line = (char *)calloc((i + 2), sizeof(char));
+	if (!line)
+	{
+		free(buf);
+		return (NULL);
+	}
 	while (d <= i)
 	{
-		line[d] = line[d];
+		line[d] = buf[d];
 		d++;
 	}
 	line[d] = '\0';
@@ -39,8 +46,8 @@ char	*get_next_line(int fd)
 	char					*buf;
 	static char				*left_c;
 
-	buf = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if (read(fd, 0, 0) < 0 || fd < 0 || BUFFER_SIZE <= 0)
+	buf = (char *)calloc((BUFFER_SIZE + 1), sizeof(char));
+	if (read(fd, 0, 0) < 0 || fd < 0 || BUFFER_SIZE <= 0 )
 	{
 		free(buf);
 		free(left_c);
@@ -50,7 +57,7 @@ char	*get_next_line(int fd)
 	}
 	if (!buf)
 		return (NULL);
-	line = fill_line_buf(fd, left_c, buf);
+	line = fill_line(fd, left_c, buf);
 	free(buf);
 	if (!line)
 		return (NULL);
@@ -59,7 +66,7 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-static char	*fill_line_buf(int fd, char *left_c, char *buf)
+static char	*fill_line(int fd, char *left_c, char *buf)
 {
 	ssize_t	bytes_read;
 	char	*temp;
@@ -68,7 +75,7 @@ static char	*fill_line_buf(int fd, char *left_c, char *buf)
 	while (bytes_read > 0 && !ft_strchr(buf, '\n'))
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
-		if (bytes_read <= 0)
+		if (bytes_read == -1)
 		{
 			free(left_c);
 			return (NULL);
@@ -81,6 +88,9 @@ static char	*fill_line_buf(int fd, char *left_c, char *buf)
 		temp = left_c;
 		left_c = ft_strjoin(temp, buf);
 		free(temp);
+		temp = NULL;
+		if (ft_strchr(buf, '\n'))
+			break ;
 	}
 	return (left_c);
 }
@@ -88,6 +98,7 @@ static char	*fill_line_buf(int fd, char *left_c, char *buf)
 static char	*sep_buffer(char *buf)
 {
 	int		i;
+	int		j;
 	char	*left_c;
 
 	i = 0;
@@ -95,17 +106,24 @@ static char	*sep_buffer(char *buf)
 		i++;
 	if (buf[1] == '\0' || buf[0] == '\0')
 		return (NULL);
-	left_c = ft_substr(buf, i + 1, ft_strlen(buf) - i);
-	buf[i + 1] = '\0';
+	left_c = ft_calloc((ft_strlen(buf) -i + 1), sizeof(char));
+	if (!left_c)
+		return (NULL);
+	j = 0;
+	while (buf[i++] != '\0')
+		left_c[j++] = buf[i];
+	left_c[j] = '\0';
 	return (left_c);
 }
-/*
+
 int		main(int ac, char **av)
 {
 	int		fd;
 
 	if (ac != 0)
-	fd = open(av[1], O_RDONLY);
+	{
+	}
+fd = open(av[1], O_RDONLY);
 	printf("1) %s", get_next_line(fd));
 	printf("2) %s", get_next_line(fd));
 	printf("3) %s", get_next_line(fd));
@@ -115,4 +133,3 @@ int		main(int ac, char **av)
 	printf("7) %s", get_next_line(fd));
 	return (0);
 }
-*/
