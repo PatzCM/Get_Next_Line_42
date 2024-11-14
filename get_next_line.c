@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: palexand <palexand@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/14 20:38:58 by palexand          #+#    #+#             */
+/*   Updated: 2024/11/14 20:38:58 by palexand         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 static char	*fill_line_buf(int fd, char *left_c, char *buf);
@@ -6,7 +18,7 @@ static char	*sep_buffer(char *buf);
 char	*burro(char *line)
 {
 	int	i;
-	int d;
+	int	d;
 
 	i = 0;
 	d = 0;
@@ -23,10 +35,10 @@ char	*burro(char *line)
 
 char	*get_next_line(int fd)
 {
-	char	*line;
-	char		*buf;
-	static char   *left_c;
-	
+	char					*line;
+	char					*buf;
+	static char				*left_c;
+
 	buf = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (read(fd, 0, 0) < 0 || fd < 0 || BUFFER_SIZE <= 0)
 	{
@@ -38,11 +50,11 @@ char	*get_next_line(int fd)
 	}
 	if (!buf)
 		return (NULL);
-	line = fill_line_buf(fd, left_c, buf); // fill line with the buffer
+	line = fill_line_buf(fd, left_c, buf);
 	free(buf);
 	if (!line)
 		return (NULL);
-	left_c = sep_buffer(line); // separate the buffer
+	left_c = sep_buffer(line);
 	line = burro(line);
 	return (line);
 }
@@ -65,11 +77,11 @@ static char	*fill_line_buf(int fd, char *left_c, char *buf)
 			break ;
 		buf[bytes_read] = 0;
 		if (!left_c)
-				left_c = ft_strdup("");
+			left_c = ft_strdup("");
 		temp = left_c;
 		left_c = ft_strjoin(temp, buf);
 		free(temp);
-}
+	}
 	return (left_c);
 }
 
@@ -84,16 +96,15 @@ static char	*sep_buffer(char *buf)
 	if (buf[1] == '\0' || buf[0] == '\0')
 		return (NULL);
 	left_c = ft_substr(buf, i + 1, ft_strlen(buf) - i);
-	buf[i + 1] = '\0';	
+	buf[i + 1] = '\0';
 	return (left_c);
 }
-
+/*
 int		main(int ac, char **av)
 {
 	int		fd;
-	
+
 	if (ac != 0)
-	{}
 	fd = open(av[1], O_RDONLY);
 	printf("1) %s", get_next_line(fd));
 	printf("2) %s", get_next_line(fd));
@@ -104,3 +115,4 @@ int		main(int ac, char **av)
 	printf("7) %s", get_next_line(fd));
 	return (0);
 }
+*/

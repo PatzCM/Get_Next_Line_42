@@ -1,22 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: palexand <palexand@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/14 20:40:45 by palexand          #+#    #+#             */
+/*   Updated: 2024/11/14 20:40:45 by palexand         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
-
-
-
-unsigned int	ft_strlcpy(char *dest, char *src, unsigned int size)
-{
-	size_t	i;
-
-	i = 0;
-	if (size <= 0)
-		return (ft_strlen(src));
-	while (i < (size - 1) && src[i])
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = '\0';
-	return (ft_strlen(src));
-}
 
 char	*ft_strjoin(char *s1, char *s2)
 {
@@ -45,6 +39,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	result[j] = '\0';
 	return (result);
 }
+
 char	*ft_strdup(const char *s)
 {
 	int		i;
@@ -62,6 +57,7 @@ char	*ft_strdup(const char *s)
 	dup[i] = '\0';
 	return (dup);
 }
+
 size_t	ft_strlen(const char *s)
 {
 	int	i;
