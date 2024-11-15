@@ -5,131 +5,98 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: palexand <palexand@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/14 20:38:58 by palexand          #+#    #+#             */
-/*   Updated: 2024/11/14 20:38:58 by palexand         ###   ########.fr       */
+/*   Created: 2024/11/15 21:08:50 by palexand          #+#    #+#             */
+/*   Updated: 2024/11/15 21:08:50 by palexand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "get_next_line.h"
 
-static char	*fill_line(int fd, char *left_c, char *buf);
-static char	*sep_buffer(char *buf);
-
-char	*burro(char *buf)
-{
-	int	i;
-	int	d;
-	char	*line;
-	i = 0;
-	d = 0;
-	
-	while (buf[i] && buf[i] != '\n')
-		i++;
-	line = (char *)calloc((i + 2), sizeof(char));
-	if (!line)
-	{
-		free(buf);
-		return (NULL);
-	}
-	while (d <= i)
-	{
-		line[d] = buf[d];
-		d++;
-	}
-	line[d] = '\0';
-	return (line);
-}
+char	*fill_line(int fd, char *left_c);
+char	*line_definer(char *left_c);
+char	*left_trim(char *untrimmed);
 
 char	*get_next_line(int fd)
 {
-	char					*line;
-	char					*buf;
-	static char				*left_c;
+	static char	*left_c;
+	char		*line;
 
-	buf = (char *)calloc((BUFFER_SIZE + 1), sizeof(char));
-	if (read(fd, 0, 0) < 0 || fd < 0 || BUFFER_SIZE <= 0 )
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (0);
+	left_c = fill_line(fd, left_c);
+	if (!ft_strlen(left_c))
 	{
-		free(buf);
 		free(left_c);
-		left_c = NULL;
-		buf = NULL;
 		return (NULL);
 	}
-	if (!buf)
-		return (NULL);
-	line = fill_line(fd, left_c, buf);
-	free(buf);
-	if (!line)
-		return (NULL);
-	left_c = sep_buffer(line);
-	line = burro(line);
+	line = line_definer(left_c);
+	left_c = left_trim(left_c);
 	return (line);
 }
 
-static char	*fill_line(int fd, char *left_c, char *buf)
+char	*fill_line(int fd, char *left_c)
 {
-	ssize_t	bytes_read;
+	int		bytes_read;
 	char	*temp;
 
+	temp = malloc(sizeof(char ) * (BUFFER_SIZE + 1));
+	if (!temp)
+		return (NULL);
 	bytes_read = 1;
-	while (bytes_read > 0 && !ft_strchr(buf, '\n'))
+	while (!ft_strchr(left_c, '\n') && bytes_read > 0)
 	{
-		bytes_read = read(fd, buf, BUFFER_SIZE);
-		if (bytes_read == -1)
+		bytes_read = read(fd, temp, BUFFER_SIZE);
+		if (bytes_read < 0)
 		{
+			free(temp);
 			free(left_c);
 			return (NULL);
 		}
-		if (bytes_read == 0)
-			break ;
-		buf[bytes_read] = 0;
-		if (!left_c)
-			left_c = ft_strdup("");
-		temp = left_c;
-		left_c = ft_strjoin(temp, buf);
-		free(temp);
-		temp = NULL;
-		if (ft_strchr(buf, '\n'))
-			break ;
+		temp[bytes_read] = '\0';
+		left_c = ft_strjoin(left_c, temp);
 	}
+	free(temp);
 	return (left_c);
 }
 
-static char	*sep_buffer(char *buf)
+char	*line_definer(char *left_c)
 {
+	char	*line;
 	int		i;
-	int		j;
-	char	*left_c;
 
 	i = 0;
-	while (buf[i] != '\n' && buf[i] != '\0')
+	if (!left_c[i])
+		return (NULL);
+	while (left_c[i] != '\n' && left_c[i])
 		i++;
-	if (buf[1] == '\0' || buf[0] == '\0')
+	line = ft_calloc((i + 2), sizeof(char));
+	if (!line)
 		return (NULL);
-	left_c = ft_calloc((ft_strlen(buf) -i + 1), sizeof(char));
-	if (!left_c)
-		return (NULL);
-	j = 0;
-	while (buf[i++] != '\0')
-		left_c[j++] = buf[i];
-	left_c[j] = '\0';
-	return (left_c);
-}
-
-int		main(int ac, char **av)
-{
-	int		fd;
-
-	if (ac != 0)
+	i = 0;
+	while (left_c[i] != '\n' && left_c[i])
 	{
+		line[i] = left_c[i];
+		i++;
 	}
-fd = open(av[1], O_RDONLY);
-	printf("1) %s", get_next_line(fd));
-	printf("2) %s", get_next_line(fd));
-	printf("3) %s", get_next_line(fd));
-	printf("4) %s", get_next_line(fd));
-	printf("5) %s", get_next_line(fd));
-	printf("6) %s", get_next_line(fd));
-	printf("7) %s", get_next_line(fd));
-	return (0);
+	if (left_c[i] == '\n')
+	{
+		line[i] = left_c[i];
+		i++;
+	}
+	line[i] = '\0';
+	return (line);
 }
+
+/*int	main (int argc, char **argv)*/
+/*{*/
+/*	if (argc == 2)*/
+/*	{*/
+/*		int fd = open(argv[1], O_RDONLY);*/
+/*		char *line;*/
+/*		while ((line = get_next_line(fd)))*/
+/*		{*/
+/*			printf("%s\n", line);*/
+/*			free(line);*/
+/*		}*/
+/*		close(fd);*/
+/*	}*/
+/*}*/

@@ -5,11 +5,10 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: palexand <palexand@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/14 20:40:30 by palexand          #+#    #+#             */
-/*   Updated: 2024/11/14 20:40:30 by palexand         ###   ########.fr       */
+/*   Created: 2024/11/15 21:13:00 by palexand          #+#    #+#             */
+/*   Updated: 2024/11/15 21:13:00 by palexand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
@@ -25,11 +24,11 @@
 # include <bsd/string.h>
 
 char	*get_next_line(int fd);
-char	*ft_strchr(const char *s, int c);
-size_t	ft_strlen(const char *s);
+char	*ft_strchr(char *s, int c);
+int		ft_strlen(const char *s);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
-char	*ft_strdup(const char *s);
 char	*ft_strjoin(char *s1, char *s2);
 void	*ft_calloc(size_t nbytes, size_t size);
+char	*left_trim(char *left_c);
 
 #endif
